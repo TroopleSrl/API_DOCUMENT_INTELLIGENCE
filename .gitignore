@@ -7,3 +7,5 @@ venv/
 .xlsx
 
 .DS_Store
+
+compar_ocr.py
