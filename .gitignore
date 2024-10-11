@@ -1,0 +1,9 @@
+venv/ 
+.env
+
+.jpg
+.pdf
+.png
+.xlsx
+
+.DS_Store
