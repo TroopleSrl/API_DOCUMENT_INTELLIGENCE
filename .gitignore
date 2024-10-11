@@ -13,6 +13,7 @@ compar_ocr.py
 __pycache__/
 
 files/
+files/*
 
 test.py
 
