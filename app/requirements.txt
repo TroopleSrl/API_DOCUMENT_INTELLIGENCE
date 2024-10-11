@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+requests
+python-docx
+pandas
+html2text
+google-generativeai
+python-multipart

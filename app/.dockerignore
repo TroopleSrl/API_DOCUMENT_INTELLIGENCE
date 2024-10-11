@@ -11,9 +11,4 @@ venv/
 compar_ocr.py
 
 __pycache__/
-
-files/
-
-test.py
-
-temp/
+    

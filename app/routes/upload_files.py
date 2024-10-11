@@ -1,12 +1,13 @@
-import os
-from fastapi import FastAPI, UploadFile
-from extract import extract_text_from_file
-from gemini_handler import handle_with_gemini
+from fastapi import APIRouter, UploadFile
 from typing import List
+import os
+from app.functions.parser import extract_text_from_file
+from app.connectors.gemini import handle_with_gemini
 
-app = FastAPI()
+# Create a router instance
+router = APIRouter()
 
-@app.post("/uploadfiles/")
+@router.post("/uploadfiles/")
 async def upload_files(files: List[UploadFile]):
     results = {}
 
