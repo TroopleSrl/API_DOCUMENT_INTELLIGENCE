@@ -1,14 +1,15 @@
 import logging
 import google.generativeai as genai
-import os
+import io
 import time
+import os
 
 # Configure the API with your API key
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-def upload_to_gemini(file_path, mime_type=None):
+def upload_to_gemini(file_like_object, mime_type=None):
     """Uploads the given file to Gemini."""
-    file = genai.upload_file(file_path, mime_type=mime_type)
+    file = genai.upload_file(file_like_object, mime_type=mime_type)
     return file
 
 def wait_for_files_active(files):
@@ -21,15 +22,18 @@ def wait_for_files_active(files):
         if file.state.name != "ACTIVE":
             raise Exception(f"File {file.name} failed to process")
 
-def handle_with_gemini(file_path):
+def handle_with_gemini(file_content, filename):
     """Handles files using Google Generative AI API."""
     mime_type = None
-    if file_path.endswith('.pdf'):
+    if filename.lower().endswith('.pdf'):
         mime_type = "application/pdf"
-    elif file_path.endswith('.png'):
+    elif filename.lower().endswith('.png'):
         mime_type = "image/png"
 
-    uploaded_file = upload_to_gemini(file_path, mime_type=mime_type)
+    # Create a BytesIO object from the file content
+    file_like_object = io.BytesIO(file_content)
+
+    uploaded_file = upload_to_gemini(file_like_object, mime_type=mime_type)
     wait_for_files_active([uploaded_file])
 
     # Use default configuration for the model without any custom parameters
