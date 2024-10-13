@@ -4,6 +4,7 @@ import pandas as pd
 import html2text
 from email import policy
 from email.parser import BytesParser
+from magika import Magika
 
 def extract_text_from_docx(file_content):
     doc = docx.Document(io.BytesIO(file_content))
@@ -60,11 +61,21 @@ def extract_text_from_eml(file_content):
     return plain_message
 
 def extract_text_from_file(file_content, filename):
-    if filename.lower().endswith('.docx'):
+    # Use Magika to identify the file type
+    magika = Magika()
+    result = magika.identify_bytes(file_content)
+    
+    # Print the result for debugging
+    print(f"Magika result.output: {result.output}")
+    print(f"Available attributes: {dir(result.output)}")
+    
+    extension = result.output.ct_label  # Correct attribute name
+
+    if extension == 'docx':
         return extract_text_from_docx(file_content)
-    elif filename.lower().endswith('.xlsx'):
+    elif extension == 'xlsx':
         return extract_text_from_xlsx(file_content)
-    elif filename.lower().endswith('.eml'):
+    elif extension == 'eml':
         return extract_text_from_eml(file_content)
     else:
         return "Unsupported format for local extraction."

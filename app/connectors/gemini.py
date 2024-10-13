@@ -3,6 +3,7 @@ import google.generativeai as genai
 import io
 import time
 import os
+from magika import Magika
 
 # Configure the API with your API key
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -24,15 +25,43 @@ def wait_for_files_active(files):
 
 def handle_with_gemini(file_content, filename):
     """Handles files using Google Generative AI API."""
-    mime_type = None
-    if filename.lower().endswith('.pdf'):
-        mime_type = "application/pdf"
-    elif filename.lower().endswith('.png'):
-        mime_type = "image/png"
+    # Use Magika to identify the file type from the file content
+    magika = Magika()
+    result = magika.identify_bytes(file_content)
+    
+    # Extract the label from the result
+    label = result.output.ct_label  # e.g., 'markdown', 'PNG image', 'PDF document'
+    print(f"Identified file label: {label}")
+    
+    # Map the label to a MIME type
+    label_to_mime = {
+        'PNG image': 'image/png',
+        'JPEG image': 'image/jpeg',
+        'PDF document': 'application/pdf',
+        'GIF image': 'image/gif',
+        'TIFF image': 'image/tiff',
+        # Add more mappings as needed
+    }
+    
+    mime_type = label_to_mime.get(label)
+    
+    if not mime_type:
+        # Fallback to MIME type based on file extension
+        if filename.lower().endswith('.pdf'):
+            mime_type = 'application/pdf'
+        elif filename.lower().endswith('.png'):
+            mime_type = 'image/png'
+        elif filename.lower().endswith(('.jpg', '.jpeg')):
+            mime_type = 'image/jpeg'
+        else:
+            # Default MIME type if none is identified
+            mime_type = 'application/octet-stream'
+    print(f"Using MIME type: {mime_type}")
 
     # Create a BytesIO object from the file content
     file_like_object = io.BytesIO(file_content)
 
+    # Proceed to upload the file
     uploaded_file = upload_to_gemini(file_like_object, mime_type=mime_type)
     wait_for_files_active([uploaded_file])
 

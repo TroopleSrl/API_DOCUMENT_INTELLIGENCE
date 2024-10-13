@@ -6,3 +6,4 @@ pandas
 html2text
 google-generativeai
 python-multipart
+magika
