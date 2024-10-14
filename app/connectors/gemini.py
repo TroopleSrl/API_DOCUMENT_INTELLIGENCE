@@ -2,6 +2,7 @@ import logging
 import google.generativeai as genai
 import io
 import time
+from app.celery_app import celery_app
 import os
 from magika import Magika
 
@@ -22,8 +23,9 @@ def wait_for_files_active(files):
             file = genai.get_file(name)
         if file.state.name != "ACTIVE":
             raise Exception(f"File {file.name} failed to process")
-
-def handle_with_gemini(file_content, filename):
+        
+@celery_app.task(name='app.connectors.gemini.handle_with_gemini', bind=True)
+def handle_with_gemini(self, file_content, filename):
     """Handles files using Google Generative AI API."""
     # Use Magika to identify the file type from the file content
     magika = Magika()
