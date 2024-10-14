@@ -65,10 +65,6 @@ def extract_text_from_file(file_content, filename):
     magika = Magika()
     result = magika.identify_bytes(file_content)
     
-    # Print the result for debugging
-    print(f"Magika result.output: {result.output}")
-    print(f"Available attributes: {dir(result.output)}")
-    
     extension = result.output.ct_label  # Correct attribute name
 
     if extension == 'docx':

@@ -34,14 +34,7 @@ def handle_with_gemini(file_content, filename):
     print(f"Identified file label: {label}")
     
     # Map the label to a MIME type
-    label_to_mime = {
-        'PNG image': 'image/png',
-        'JPEG image': 'image/jpeg',
-        'PDF document': 'application/pdf',
-        'GIF image': 'image/gif',
-        'TIFF image': 'image/tiff',
-        # Add more mappings as needed
-    }
+    label_to_mime = f'image/{label}'
     
     mime_type = label_to_mime.get(label)
     
