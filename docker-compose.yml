@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    volumes:
+      - ./app:/app
+    command: /start-reload.sh
+    ports:
+      - "8000:80"
+    environment:
+      - MAX_WORKERS=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  redis:
+    image: redis:alpine
