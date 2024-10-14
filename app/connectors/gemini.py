@@ -34,10 +34,8 @@ def handle_with_gemini(file_content, filename):
     print(f"Identified file label: {label}")
     
     # Map the label to a MIME type
-    label_to_mime = f'image/{label}'
-    
-    mime_type = label_to_mime.get(label)
-    
+    mime_type = f'image/{label}'
+        
     if not mime_type:
         # Fallback to MIME type based on file extension
         if filename.lower().endswith('.pdf'):
