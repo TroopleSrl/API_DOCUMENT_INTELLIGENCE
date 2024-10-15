@@ -9,14 +9,15 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY: SecretStr
     GOOGLE_LLM_MODEL: str = "gemini-1.5-flash"
     GOOGLE_MODEL_CONFIG : dict = {
-        "temperature": 1,
-        "candidate_count": 2    
+        "temperature": 0,
+        "candidate_count": 1
     }
 
     # OPENAI_API_KEY: SecretStr
 
-    SYSTEM_PROMPT : str = """
-You are an AI expert specializing in Optical Character Recognition (OCR) and text extraction from images and scanned documents. Your primary tasks are:
+    SYSTEM_PROMPT : str = "You are an AI expert specializing in Optical Character Recognition (OCR) and text extraction from images and scanned documents."
+    USER_PROMPT : str = """
+Your tasks are:
 
 1. Perform thorough OCR on all pages of the provided document or image.
 
@@ -34,13 +35,12 @@ You are an AI expert specializing in Optical Character Recognition (OCR) and tex
 
 5. Verify that all extracted information is coherent and makes sense in context.
 
-6. Include ALL text from EVERY page of the document, without exception.
+6. Provide a comprehensive and accurate transcription of the entire document without page separation.
 
-7. If any inconsistencies or illogical elements are found, highlight them in your response.
-
-8. Provide a comprehensive and accurate transcription of the entire document, maintaining its original structure and format as much as possible.
+7. Return the transcription in a clean, readable format. If there are several languages present in the document, separate the text by language.
 
 Remember: Accuracy, completeness, and consistency are your top priorities. Do not omit any text, no matter how insignificant it may seem.
+Return only the text without explanations or comments.
 """.strip()
 
 @lru_cache

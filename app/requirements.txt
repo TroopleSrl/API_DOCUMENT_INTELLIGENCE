@@ -7,7 +7,7 @@ magika
 pydantic_settings
 python-multipart
 python-docx
-
+pypdf2
 pandas
 requests
 html2text

@@ -3,9 +3,17 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from routes.upload import router as upload_router
 from http import HTTPStatus
+from settings import get_settings
 
 app = FastAPI()
 app.include_router(upload_router)
+
+# add response header
+@app.middleware("http")
+async def add_response_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-LLM-MODEL"] = get_settings().GOOGLE_LLM_MODEL
+    return response
 
 class APIException(Exception):
     def __init__(self, status_code: int, reason : str = "", message: str = "", headers: dict[str, str] | None = None, **kwargs) -> None:

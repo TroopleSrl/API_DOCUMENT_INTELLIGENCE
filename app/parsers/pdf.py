@@ -1,6 +1,9 @@
 from parsers.parser import Parser
 from connectors.google import GeminiLLM
+from PyPDF2 import PdfReader, PdfWriter
 from io import BytesIO
+from asyncio import gather, run
+from settings import get_settings
 
 class PdfParser(Parser):
     
@@ -8,11 +11,34 @@ class PdfParser(Parser):
         super().__init__(*args, **kwargs)
         self.gemini = GeminiLLM()
 
-    def parse(self, mime_type: str = "application/pdf") -> str:
-        self.gemini.upload_file(BytesIO(self.data), mime_type, wait=True)
-        chat = self.gemini.chat("Extract everything from the PDF file.")
-        return chat
+    def parse(self, mime_type: str) -> str:
+        return run(self.aparse(mime_type))
 
-    def __del__(self):
-        for _ in range(len(self.gemini.files)):
-            self.gemini.remove_file(self.gemini.files[0])
+    async def aparse(self, mime_type: str = "application/pdf") -> str:
+        if mime_type.lower() == "application/pdf":
+            self.pdf = PdfReader(BytesIO(self.data))
+            self.splits = self.split_pdf_group_of_pages(2)
+            print(f"Split into {len(self.splits)} groups of pages")
+            uploads = await gather(*[self.gemini.upload_file(split, mime_type, wait=False) for split in self.splits])
+            files = await gather(*[self.gemini.wait_for_file(file) for file in uploads])
+            texts = await gather(*[self.gemini.chat(get_settings().USER_PROMPT, files=[file]) for file in files])
+            text = " ".join(texts)
+        else:
+            await self.gemini.upload_file(BytesIO(self.data), mime_type, wait=True)
+            text = await self.gemini.chat(get_settings().USER_PROMPT)
+
+        del self.gemini
+        return text
+
+    def split_pdf_group_of_pages(self, pages_per_group: int = 2) -> list[BytesIO]:
+        splits = []
+        for i in range(0, len(self.pdf.pages), pages_per_group):
+            writer = PdfWriter()
+            bio = BytesIO()
+            idx_start = i
+            idx_end = min(i + pages_per_group, len(self.pdf.pages))
+            for page in self.pdf.pages[idx_start:idx_end]:
+                writer.add_page(page)
+            writer.write(bio)
+            splits.append(bio)
+        return splits

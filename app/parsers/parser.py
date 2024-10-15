@@ -5,6 +5,3 @@ class Parser:
 
     def parse(self, mime_type: str) -> str:
         raise NotImplementedError("Subclasses must implement this method")
-    
-    def __del__(self):
-        raise NotImplementedError("Subclasses must implement this method")
