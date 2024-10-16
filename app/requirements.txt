@@ -11,3 +11,6 @@ pypdf2
 pandas
 requests
 html2text
+docx2txt
+mammoth
+pdfkit
