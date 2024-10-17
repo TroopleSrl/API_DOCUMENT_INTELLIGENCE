@@ -10,6 +10,6 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libfontconfig1 \
     && apt-get clean
-    
+
 RUN pip install -r /app/requirements.txt --upgrade --no-cache-dir
 

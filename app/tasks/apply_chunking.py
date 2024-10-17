@@ -6,7 +6,7 @@ def chunk_text(text: str, chunker_type: str, chunk_size: int):
     try:
         ChunkerClass = get_chunker(chunker_type)
         chunker = ChunkerClass(chunk_size)
-        chunks = list(chunker.chunk(text))
+        chunks = chunker.chunk(text)
 
         del chunker
         return chunks
