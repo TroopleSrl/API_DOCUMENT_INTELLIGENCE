@@ -2,6 +2,7 @@ venv/
 .env
 
 2.docx
+3.pdf
 
 output.pdf
 
@@ -21,6 +22,7 @@ files/
 files/*
 
 test.py
+
 
 temp/
 

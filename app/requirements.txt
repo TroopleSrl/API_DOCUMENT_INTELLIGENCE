@@ -17,3 +17,5 @@ pdfkit
 semchunk
 tiktoken
 transformers
+numpy
+scikit-learn
