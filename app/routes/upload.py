@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, Form
 from tasks.apply_chunking import chunk_text
-from magika import Magika
+from file_type_checker.file_type_checker import get_ext_and_mime
 import asyncio
 from tasks.handle_document import handle_document
 
@@ -8,15 +8,12 @@ router = APIRouter()
 
 @router.post("/upload")
 async def upload_files(files: list[UploadFile], chunker_type: str = Form(...), chunk_size: int = Form(...)):
-    magika = Magika()
     extracted_texts = []
     
     # Step 1: Handle file uploads asynchronously and extract text
     async def handle_file(file):
         file_content = await file.read()
-        file_mk = magika.identify_bytes(file_content).output
-        file_type = file_mk.ct_label
-        file_mime = file_mk.mime_type
+        file_type, file_mime = get_ext_and_mime(file, file_content)
         print(f"Identified file type: {file_type} with MIME type {file_mime}")
         task = handle_document.delay(file_content, file_type, file_mime)
         return task.get()  # Blocking call to get result from Celery task

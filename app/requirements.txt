@@ -19,3 +19,4 @@ tiktoken
 transformers
 numpy
 scikit-learn
+python-magic
