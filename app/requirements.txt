@@ -22,3 +22,4 @@ python-magic
 asyncio
 psycopg2-binary
 sqlmodel
+cryptography

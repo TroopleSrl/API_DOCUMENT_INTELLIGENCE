@@ -1,17 +1,25 @@
 from functools import lru_cache
-from pydantic import SecretStr
+from pydantic import SecretStr, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # ignore env variables that are not in the model
     model_config = SettingsConfigDict(env_file=".env", case_insensitive=True, extra="ignore", env_prefix="TROOPLE__")
     
+    ADMIN_TOKEN: SecretStr
+    FERNET_KEY: SecretStr = "4SNd1Twp3OWR-G2Qd6wXDkDyjz1FHDQMxecva4tVIDk="
+
+    CELERY_BROKER_URL: str = "redis://localhost:6379/0"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
+
     GOOGLE_API_KEY: SecretStr
     GOOGLE_LLM_MODEL: str = "gemini-1.5-flash"
     GOOGLE_MODEL_CONFIG : dict = {
         "temperature": 0,
         "candidate_count": 1
     }
+
+    DATABASE_URL : PostgresDsn
 
     # OPENAI_API_KEY: SecretStr
 

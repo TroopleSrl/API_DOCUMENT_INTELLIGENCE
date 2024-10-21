@@ -6,20 +6,27 @@ services:
     volumes:
       - ./app:/app
     command: /start-reload.sh
+    profiles: [""]
     ports:
       - "8000:80"
     environment:
       - MAX_WORKERS=1
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - DATABASE_URL=postgresql://admin:root@container-pg:5432/postgres
+      - TROOPLE__DATABASE_URL=postgresql://admin:root@container-pg:5432/postgres
+  
   redis:
     image: redis:alpine
+    container_name: container-redis
+    profiles: ["", "dev"]
+    ports:
+      - "6379:6379"
 
   postgres:
     container_name: container-pg
     image: postgres:16
     hostname: localhost
+    profiles: ["", "dev"]
     ports:
       - "5432:5432"
     environment:
@@ -33,6 +40,7 @@ services:
   pgadmin:
     container_name: container-pgadmin
     image: dpage/pgadmin4
+    profiles: ["mark"]
     depends_on:
       - postgres
     ports:

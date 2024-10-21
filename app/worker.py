@@ -1,12 +1,12 @@
 # app/celery_py
 
 from celery import Celery
-from os import getenv
+from settings import get_settings
 
 celery_app = Celery(
     __name__,
-    broker=getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0'),
-    backend=getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0'),
+    broker=get_settings().CELERY_BROKER_URL,
+    backend=get_settings().CELERY_RESULT_BACKEND,
 )
 celery_conf = celery_app.conf
 

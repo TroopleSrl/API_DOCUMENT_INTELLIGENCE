@@ -58,7 +58,6 @@ class GeminiLLM:
                     }
                 ]
             ).send_message_async(content=message)
-            print(response.usage_metadata)
             return response.text
         except Exception as e:
             print(f"Error: {e}")
