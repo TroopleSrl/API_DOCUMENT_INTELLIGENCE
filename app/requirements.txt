@@ -18,5 +18,7 @@ semchunk
 tiktoken
 transformers
 numpy
-scikit-learn
 python-magic
+asyncio
+psycopg2-binary
+sqlmodel

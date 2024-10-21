@@ -1,8 +1,7 @@
 from chunkers.chunker import Chunker
 import re
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-import google.generativeai as genai
+from google.generativeai import embed_content_async
 
 class SemanticChunker(Chunker):
     def __init__(self, chunk_size = 1):
@@ -15,6 +14,12 @@ class SemanticChunker(Chunker):
         sentences = [{'sentence': x, 'index' : i} for i, x in enumerate(single_sentences_list)]
         return sentences
     
+    def cosine_similariity(self, a, b):
+        dot_product = np.dot(a, b)
+        norm_a = np.linalg.norm(a)
+        norm_b = np.linalg.norm(b)
+        return dot_product / (norm_a * norm_b)
+    
     def calculate_cosine_distances(self, sentences):
         distances = []
         for i in range(len(sentences) - 1):
@@ -22,7 +27,7 @@ class SemanticChunker(Chunker):
             embedding_next = sentences[i + 1]['combined_sentence_embedding']
             
             # Calculate cosine similarity
-            similarity = cosine_similarity([embedding_current], [embedding_next])[0][0]
+            similarity = self.cosine_similarity(embedding_current, embedding_next)
             
             # Convert to cosine distance
             distance = 1 - similarity
@@ -99,7 +104,7 @@ class SemanticChunker(Chunker):
 
         return chunks\
         
-    def chunk(self, text: str):
+    async def chunk(self, text: str):
         sentences = self.create_sentences(text)
         sentences = self.combine_sentences(sentences, self.buffer_size)
 
@@ -111,7 +116,7 @@ class SemanticChunker(Chunker):
             embeddings = []
             for sentence in combined_sentences:
                 # Get the embedding and check its structure
-                result = genai.embed_content(model=self.model, content=sentence, task_type="SEMANTIC_SIMILARITY")
+                result = await embed_content_async(model=self.model, content=sentence, task_type="SEMANTIC_SIMILARITY")
                 if 'embedding' in result:
                     embeddings.append(result['embedding']) 
                 else:

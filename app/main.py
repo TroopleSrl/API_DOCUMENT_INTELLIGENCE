@@ -3,12 +3,14 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from routes.upload import router as upload_router
 from routes.chunk import router as chunk_router
+from routes.register import router as register_router
 from http import HTTPStatus
 from settings import get_settings
 
 app = FastAPI()
 app.include_router(upload_router)
 app.include_router(chunk_router)
+app.include_router(register_router)
 
 # add response header
 @app.middleware("http")

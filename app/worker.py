@@ -19,4 +19,4 @@ celery_conf.update(
 )
 
 # Autodiscover tasks in specified modules
-celery_app.autodiscover_tasks(['tasks.handle_document','tasks.apply_chunking'], force=True)
+celery_app.autodiscover_tasks(['tasks.handle_document','tasks.apply_chunking' ], force=True)
