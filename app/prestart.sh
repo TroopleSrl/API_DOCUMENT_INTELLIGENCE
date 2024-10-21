@@ -1,0 +1,1 @@
+celery -A worker.celery_app worker --loglevel=warning & 
