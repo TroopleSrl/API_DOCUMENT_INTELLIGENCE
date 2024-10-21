@@ -10,14 +10,10 @@ class ChunkRequest(BaseModel):
     chunk_size: int
 
 @router.post("/chunk")
-async def chunk(chunk_request: ChunkRequest):
-    tasks = []
+def chunk(chunk_request: ChunkRequest):
+    # Call the synchronous Celery task
     task = chunk_text.delay(chunk_request.text, chunk_request.chunker_type, chunk_request.chunk_size)
 
-    tasks.append(task)
+    result = task.get()
 
-    # Wait for all results
-    if not tasks: return []
-    results = [task.get() for task in tasks]
-    return results
-
+    return {"result": result}

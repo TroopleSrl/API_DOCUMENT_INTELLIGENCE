@@ -10,11 +10,10 @@ def chunk_text(text: str, chunker_type: str, chunk_size: int):
         # Initialize the chunker
         chunker = ChunkerClass(chunk_size)
 
-        # Perform chunking operation
+        # Perform chunking operation (make sure this is synchronous)
         chunks = chunker.chunk(text)
         print(f"Chunks of text: {chunks}")
-        # Log and ensure chunks is serializable (should be a list or dict)
-        print(f"Chunks: {chunks}")
+        # Ensure chunks is serializable (should be a list or dict)
         if isinstance(chunks, list):  # Ensure chunks is a list
             return chunks
         else:
